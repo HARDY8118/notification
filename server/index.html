@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SERVER SENT</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      div {
+        margin: 20%;
+        font-size: 2em;
+        font-family: "Courier New", Courier, monospace;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <span></span>
+      <i></i>
+    </div>
+  </body>
+  <script>
+    const evSrc = new EventSource("/subscribe");
+    evSrc.addEventListener("open", (e) => {
+      console.log("Opened", e);
+    });
+    evSrc.addEventListener("message", (e) => {
+      console.log("message", e);
+    });
+    evSrc.addEventListener("notification", (e) => {
+      console.log("update", e);
+    });
+    // evSrc.close()
+  </script>
+</html>

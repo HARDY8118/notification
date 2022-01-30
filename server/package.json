@@ -1,0 +1,12 @@
+{
+  "name": "Notification",
+  "version": "1.0.0",
+  "description": "Notifications using Server Sent Events",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "amqplib": "^0.8.0",
+    "express": "^4.17.2"
+  }
+}

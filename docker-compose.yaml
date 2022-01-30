@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  # nginx:
+  #   container_name: "frontend"
+  #   image: nginx
+  #   volumes:
+  #     # - ./static/:/usr/share/nginx/html/
+  #     - ./client/nginx/:/etc/nginx/
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+
+  rabbitmq:
+    container_name: "rabbitmq"
+    image: rabbitmq
+    ports:
+      - 5672:5672
+
+  server:
+    container_name: "backend"
+    build: ./server/
+    image: backend
+    ports:
+      - 3000:3000
+    environment:
+      - AMQP_SERVER=amqp://rabbitmq:5672
+    depends_on:
+      - rabbitmq
+    volumes:
+      - ./server/:/usr/src/app/
+  
