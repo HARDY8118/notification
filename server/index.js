@@ -58,7 +58,7 @@ app.get(
         req.notifications.push(message.content.toString());
       }
     });
-    setTimeout(next, 1000);
+    setTimeout(next, 4000); // Assuming 4 seconds to resolve
   },
   (req, res) => {
     res.send(req.notifications.toString());
