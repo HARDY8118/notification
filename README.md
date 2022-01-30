@@ -1,6 +1,6 @@
 # Notifications
 
-Sample app to send notification system
+Sample app to send notification system using RabbitMQ
 
 # Technologies used
 - Node.js

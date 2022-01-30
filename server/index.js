@@ -47,32 +47,29 @@ app.get("/", (req, res) => {
     .sendFile(path.join(path.resolve(path.dirname("")), "index.html"));
 });
 
-app.get("/subscribe", (req, res) => {
-  if (req.headers.accept && req.headers.accept === "text/event-stream")
-    res.writeHead(200, {
-      "Content-Type": "text/event-stream",
-      Connection: "keep-alive",
-      "Cache-Control": "no-cache",
+app.get(
+  "/subscribe",
+  async (req, res, next) => {
+    consumerChannel.consume(q, (message) => {
+      // console.log(message);
+      if (!req.notifications) {
+        req.notifications = [message.content.toString()];
+      } else {
+        req.notifications.push(message.content.toString());
+      }
     });
-
-  req.on("close", () => {
-    console.log("closed conn");
-  });
-
-  consumerChannel.consume(q, (message) => {
-    // console.log(message.content.toString());
-    res.write(
-      `id: ${Date.now()}\ndata: ${new Date().toLocaleTimeString()}\nevent: update\ndata: ${message.content.toString()}\n\n`
-    );
-  });
-
-  // res.send("SENT");
-});
+    setTimeout(next, 1000);
+  },
+  (req, res) => {
+    res.send(req.notifications.toString());
+  }
+);
 
 app.get("/post", async (req, res) => {
-  console.log(req.query.msg);
+  console.log("New Message: " + req.query.msg);
   await publisherChannel.sendToQueue(q, Buffer.from(req.query.msg));
-  res.send(req.query.msg);
+  // res.send("New message: " + req.query.msg);
+  res.send("");
 });
 
 app.listen(3000, () => {
