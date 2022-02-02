@@ -33,6 +33,13 @@
       console.log("message", e);
     });
     evSrc.addEventListener("notification", (e) => {
+      // console.log("notification", e);
+      console.log(`New ${e.type}: ${e.data} at ${e.timeStamp}`)
+    });
+    evSrc.addEventListener("error", (e) => {
+      console.log("Error", e);
+    });
+    evSrc.addEventListener("update", (e) => {
       console.log("update", e);
     });
     // evSrc.close()

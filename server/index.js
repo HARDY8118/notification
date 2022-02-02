@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const { createClient } = require("redis");
 
 const app = express();
 
@@ -8,6 +9,8 @@ let amqpConnection,
   consumerChannel,
   amqpMaxRetries = 3,
   amqpTimeout = 8000;
+
+let redisClient;
 
 const q = "notifications";
 
@@ -39,6 +42,33 @@ async function connectMQ() {
 
 setTimeout(connectMQ, amqpTimeout);
 
+async function connectRedis() {
+  redisClient = createClient({
+    url: "redis://redis:6379",
+  });
+  redisClient.on("error", (err) => {
+    throw err;
+  });
+  await redisClient.connect();
+  console.info("Connection established from redis");
+}
+
+setTimeout(connectRedis, 8000);
+
+// Check queue and add to redis
+setInterval(() => {
+  if (consumerChannel) {
+    consumerChannel.consume(q, (message) => {
+      redisClient.hSet(
+        "notifications",
+        Date.now().toString(),
+        message.content.toString()
+      );
+      console.info("Consumed", message.content.toString());
+    });
+  }
+}, 4000);
+
 app.get("/", (req, res) => {
   // return res.send("OK");
   return res
@@ -47,23 +77,31 @@ app.get("/", (req, res) => {
     .sendFile(path.join(path.resolve(path.dirname("")), "index.html"));
 });
 
-app.get(
-  "/subscribe",
-  async (req, res, next) => {
-    consumerChannel.consume(q, (message) => {
-      // console.log(message);
-      if (!req.notifications) {
-        req.notifications = [message.content.toString()];
-      } else {
-        req.notifications.push(message.content.toString());
-      }
+app.get("/subscribe", async (req, res) => {
+  if (req.headers.accept && req.headers.accept === "text/event-stream")
+    res.writeHead(200, {
+      "Content-Type": "text/event-stream",
+      Connection: "keep-alive",
+      "Cache-Control": "no-cache",
     });
-    setTimeout(next, 4000); // Assuming 4 seconds to resolve
-  },
-  (req, res) => {
-    res.send(req.notifications.toString());
-  }
-);
+  setInterval(async () => {
+    if (redisClient) {
+      const notifs = await redisClient.hGetAll("notifications");
+      for (let id in notifs) {
+        console.info(`Sending ${id}: ${notifs[id]}`);
+        res.write(
+          `id: ${id}\n` +
+            `event: notification\n` +
+            `data: ${notifs[id]}\n\n`
+        );
+        console.info(`Deleting ${id}: ${notifs[id]}`);
+        redisClient.hDel("notifications", id);
+      }
+    } else {
+      console.warn("Redis client not found");
+    }
+  }, 2000);
+});
 
 app.get("/post", async (req, res) => {
   console.log("New Message: " + req.query.msg);

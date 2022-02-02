@@ -17,6 +17,12 @@ services:
     ports:
       - 5672:5672
 
+  redis:
+    container_name: "redis"
+    image: redis
+    ports:
+      - 6379:6379
+
   server:
     container_name: "backend"
     build: ./server/
@@ -27,6 +33,6 @@ services:
       - AMQP_SERVER=amqp://rabbitmq:5672
     depends_on:
       - rabbitmq
+      - redis
     volumes:
       - ./server/:/usr/src/app/
-  
