@@ -31,7 +31,7 @@ services:
       - 3000:3000
     environment:
       - AMQP_SERVER=amqp://rabbitmq:5672
-    depends_on:
+    # depends_on:
       - rabbitmq
       - redis
     volumes:
