@@ -14,15 +14,9 @@
   const eventSrc = new EventSource(
     "http://localhost:3000/subscribe/" + channel
   );
-  // const eventSrc = new EventSourcePolyfill("http://localhost:3000/subscribe", {
-  //   headers: {
-  //     "X-Custom-Header": "randomvalue",
-  //   },
-  // });
-
   const notificationsHandler = (e) => {
     // console.log(`New ${e.type}: ${e.data} at ${e.timeStamp}`);
-    list.unshift({ text: e.data, time: e.lastEventId });
+    list.unshift({ text: e.data, time: e["lastEventId"] });
     !listOpen && unread++;
   };
 

@@ -1,47 +1,49 @@
 const express = require("express");
 const path = require("path");
-const { createClient } = require("redis");
+// const { createClient } = require("redis");
 const cors = require("cors");
 
 const app = express();
 
-// let amqpConnection,
-//   publisherChannel,
-//   consumerChannel,
-//   amqpMaxRetries = 3,
-//   amqpTimeout = 8000;
+let amqpConnection,
+  publisherChannel,
+  consumerChannel,
+  amqpMaxRetries = 3,
+  amqpTimeout = 8000;
+
+const channels = {};
 
 // let redisClient;
 
-// const q = "notifications";
+const q = "notifications";
 
-// async function connectMQ() {
-//   try {
-//     amqpConnection = await require("amqplib").connect(
-//       process.env["AMQP_SERVER"]
-//     );
-//     publisherChannel = await amqpConnection.createChannel();
-//     await publisherChannel.assertQueue(q);
+async function connectMQ() {
+  try {
+    amqpConnection = await require("amqplib").connect(
+      process.env["AMQP_SERVER"]
+    );
+    publisherChannel = await amqpConnection.createChannel();
+    await publisherChannel.assertQueue(q);
 
-//     consumerChannel = await amqpConnection.createChannel();
-//     await consumerChannel.assertQueue(q);
+    consumerChannel = await amqpConnection.createChannel();
+    await consumerChannel.assertQueue(q);
 
-//     console.info("Connection established from rabbitMQ");
-//     return;
-//   } catch (e) {
-//     console.error(e);
-//     // console.error("Error connecting AMQP Server");
-//     // console.log("Retrying ");
-//     if (amqpMaxRetries--) {
-//       setTimeout(connectMQ, amqpTimeout);
-//     } else {
-//       console.error("Failed to establish connection");
-//       process.exit(1);
-//     }
-//   }
-// }
+    console.info("Connection established from rabbitMQ");
+    return;
+  } catch (e) {
+    console.error(e);
+    // console.error("Error connecting AMQP Server");
+    // console.log("Retrying ");
+    if (amqpMaxRetries--) {
+      setTimeout(connectMQ, amqpTimeout);
+    } else {
+      console.error("Failed to establish connection");
+      process.exit(1);
+    }
+  }
+}
 
-// setTimeout(connectMQ, amqpTimeout);
+setTimeout(connectMQ, amqpTimeout);
 
 // async function connectRedis() {
 //   redisClient = createClient({
@@ -56,19 +58,24 @@ const app = express();
 
 // setTimeout(connectRedis, 8000);
 
-// Check queue and add to redis
-// setInterval(() => {
-//   if (consumerChannel) {
-//     consumerChannel.consume(q, (message) => {
-//       redisClient.hSet(
-//         "notifications",
-//         Date.now().toString(),
-//         message.content.toString()
-//       );
-//       console.info("Consumed", message.content.toString());
-//     });
-//   }
-// }, 4000);
+// // Check queue and add to redis
+setInterval(() => {
+  if (consumerChannel) {
+    consumerChannel.consume(q, (message) => {
+      const [channel, content] = message.content.toString().split(":");
+
+      if (channels[channel]) {
+        channels[channel].forEach((res) => {
+          res.write(
+            `id: ${Date.now()}\n` +
+              `event: notification\n` +
+              `data: ${content}\n\n`
+          );
+        });
+      }
+    });
+  }
+}, 4000);
 
 app.use(cors());
 
@@ -80,13 +87,21 @@ app.get("/", (req, res) => {
   //   .sendFile(path.join(path.resolve(path.dirname("")), "index.html"));
 });
 
-app.get("/subscribe", (req, res) => {
+app.get("/subscribe/:channel", (req, res) => {
   if (req.headers.accept && req.headers.accept === "text/event-stream") {
     res.writeHead(200, {
       "Content-Type": "text/event-stream",
       Connection: "keep-alive",
       "Cache-Control": "no-cache",
     });
+
+    if (!channels[req.params.channel]) {
+      channels[req.params.channel] = [res];
+    } else {
+      channels[req.params.channel].push(res);
+    }
+
+    // console.log(req.params.channel);
     // setInterval(() => {
     //   res.write(
     //     `id: ${Date.now()}\n` +
@@ -100,11 +115,12 @@ app.get("/subscribe", (req, res) => {
   }
 });
 
-app.get("/post", async (req, res) => {
-  // console.log("New Message: " + req.query.msg);
-  await publisherChannel.sendToQueue(q, Buffer.from(req.query.msg));
-  res.send("New message: " + req.query.msg);
-  // res.send("");
+app.get("/post/:channel", async (req, res) => {
+  await publisherChannel.sendToQueue(
+    q,
+    Buffer.from(req.params.channel + ":" + req.query.msg)
+  );
+  res.send("Received New message: " + req.query.msg);
 });
 
 app.listen(3000, () => {

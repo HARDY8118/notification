@@ -5,7 +5,7 @@
 
 <div>
   <h3>{text}</h3>
-  <span>{new Date(time).toDateString()}</span>
+  <span>{new Date(parseInt(time)).toDateString()}</span>
 </div>
 
 <style>
