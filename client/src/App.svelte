@@ -1,16 +1,17 @@
 <script lang="ts">
   import Navbar from "./Navbar.svelte";
   const channels = ["react", "vue", "angular", "svelte"];
+  const channel = channels[Math.floor(Math.random() * channels.length)];
 
   window.addEventListener("load", (e) => {
-    const channel = channels[Math.floor(Math.random() * channels.length)];
     console.log("%cChannel: " + channel, "font-size: 1.2em; color: aqua");
-    document.cookie = "uid=" + channel + "; Max-Age=" + 3600 * 2; //Expire after 2 minutes
+    document.cookie =
+      "uid=" + channel + "; Max-Age=" + 3600 * 2 + "; SameSite=None"; //Expire after 2 minutes
   });
 </script>
 
 <main>
-  <Navbar />
+  <Navbar {channel} />
 </main>
 
 <style>

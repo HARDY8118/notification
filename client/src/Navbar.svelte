@@ -1,6 +1,8 @@
 <script lang="ts">
   import NotificationsList from "./NotificationsList.svelte";
 
+  export let channel;
+
   let unread = 0;
   let listOpen = false;
   let list = [
@@ -9,10 +11,17 @@
   ];
 
   //   onMount(() => {
-  const eventSrc = new EventSource("http://localhost:3000/subscribe");
+  const eventSrc = new EventSource(
+    "http://localhost:3000/subscribe/" + channel
+  );
+  // const eventSrc = new EventSourcePolyfill("http://localhost:3000/subscribe", {
+  //   headers: {
+  //     "X-Custom-Header": "randomvalue",
+  //   },
+  // });
 
   const notificationsHandler = (e) => {
-    console.log(`New ${e.type}: ${e.data} at ${e.timeStamp}`);
+    // console.log(`New ${e.type}: ${e.data} at ${e.timeStamp}`);
     list.unshift({ text: e.data, time: e.lastEventId });
     !listOpen && unread++;
   };
