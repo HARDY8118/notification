@@ -5,10 +5,7 @@
 
   let unread = 0;
   let listOpen = false;
-  let list = [
-    // { text: "lorem", time: "123" },
-    // { text: "ipsum", time: "194" },
-  ];
+  let list = [];
 
   //   onMount(() => {
   const eventSrc = new EventSource(
@@ -53,7 +50,10 @@
 </script>
 
 <nav>
-  <span class="left" />
+  <span class="left">
+    {channel}
+    <span id="channel-hint">Channel Name</span>
+  </span>
   <span class="right">
     {#if unread > 0}
       <i
@@ -90,6 +90,32 @@
 
   span.left {
     flex: 4;
+    font-size: 2em;
+    text-transform: capitalize;
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+    padding-left: 1em;
+    color: white;
+    cursor: default;
+  }
+
+  span.left > #channel-hint {
+    display: none;
+    margin-block: auto;
+    margin-left: 1em;
+  }
+
+  span.left:hover > span#channel-hint {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.5em;
+    background-color: gray;
+    color: white;
+    font-weight: 400;
+    padding: 4px;
+    border: solid 1px white;
+    border-radius: 0.5em;
   }
 
   span.right {

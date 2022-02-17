@@ -4,9 +4,10 @@
   const channel = channels[Math.floor(Math.random() * channels.length)];
 
   window.addEventListener("load", (e) => {
-    console.log("%cChannel: " + channel, "font-size: 1.2em; color: aqua");
-    document.cookie =
-      "uid=" + channel + "; Max-Age=" + 3600 * 2 + "; SameSite=None"; //Expire after 2 minutes
+    console.log(
+      "%cJoined Channel: " + channel,
+      "font-size: 1.2em; color: aqua"
+    );
   });
 </script>
 
