@@ -45,17 +45,16 @@ accepts@~1.3.7:
     mime-types "~2.1.24"
     negotiator "0.6.2"
 
-amqplib@^0.8.0:
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/amqplib/-/amqplib-0.8.0.tgz#088d10bc61cc5ac5a49ac72033c7ac66c23aeb61"
-  integrity sha512-icU+a4kkq4Y1PS4NNi+YPDMwdlbFcZ1EZTQT2nigW3fvOb6AOgUQ9+Mk4ue0Zu5cBg/XpDzB40oH10ysrk2dmA==
+amqplib@^0.9.0:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/amqplib/-/amqplib-0.9.1.tgz#f2ad6e518a148a761e102bf791314fbe4cb94346"
+  integrity sha512-a1DP0H1LcLSMKPAnhUN2AKbVyEPqEUrUf7O+odhKGxaO+Tf0nWtuD7Zq5P9uZwZteu56OfW9EQozSCTKsAEk5w==
   dependencies:
     bitsyntax "~0.1.0"
     bluebird "^3.7.2"
     buffer-more-ints "~1.0.0"
     readable-stream "1.x >=1.1.9"
-    safe-buffer "~5.2.1"
-    url-parse "~1.5.1"
+    url-parse "~1.5.10"
 
 array-flatten@1.1.1:
   version "1.1.1"
@@ -425,7 +424,7 @@ requires-port@^1.0.0:
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
   integrity sha1-kl0mAdOaxIXgkc8NpcbmlNw9yv8=
 
-safe-buffer@5.2.1, safe-buffer@~5.2.1:
+safe-buffer@5.2.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.2.1.tgz#1eaf9fa9bdb1fdd4ec75f58f9cdb4e6b7827eec6"
   integrity sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==
@@ -502,10 +501,10 @@ unpipe@1.0.0, unpipe@~1.0.0:
   resolved "https://registry.yarnpkg.com/unpipe/-/unpipe-1.0.0.tgz#b2bf4ee8514aae6165b4817829d21b2ef49904ec"
   integrity sha1-sr9O6FFKrmFltIF4KdIbLvSZBOw=
 
-url-parse@~1.5.1:
-  version "1.5.4"
-  resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.5.4.tgz#e4f645a7e2a0852cc8a66b14b292a3e9a11a97fd"
-  integrity sha512-ITeAByWWoqutFClc/lRZnFplgXgEZr3WJ6XngMM/N9DMIm4K8zXPCZ1Jdu0rERwO84w1WC5wkle2ubwTA4NTBg==
+url-parse@~1.5.10:
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.5.10.tgz#9d3c2f736c1d75dd3bd2be507dcc111f1e2ea9c1"
+  integrity sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==
   dependencies:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
